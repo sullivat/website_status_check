@@ -1,3 +1,16 @@
+"""
+- website status alerts -
+
+check websites for 200 (ok) status, if the site is done or not ok, send a message to recipients.
+
+Timothy Sullivan, 2017
+
+before using, BUILD A 'config.ini' file with your secrets and info!
+
+'config_template.ini' is provided as a template to create the config.ini file
+with your own sites and email credentials.
+"""
+
 import configparser
 import smtplib
 from email.mime.text import MIMEText
@@ -18,6 +31,7 @@ SITES = [config['sites'][k] for k in config['sites']]
 # parse the email sending account from cofig.ini
 email_addr = config['email']['sender address']
 email_password = config['email']['sender password']
+recipients = config['email']['recipients']
 
 # Set up logging, only logging INFO and higher priority messages
 logging.basicConfig(
@@ -70,17 +84,16 @@ def send_notice(site):
     """.format(site, datetime.datetime.now())
 
     msg = MIMEText(mail_body)
-    me = "sullivan.timm@gmail.com"
 
     msg['Subject'] = 'YOUR SITE: {} IS DOWN!!!'.format(site)
     msg['From'] = email_addr
-    msg['To'] = me
+    msg['To'] = recipients
 
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.starttls()
     server.login(email_addr, email_password)
 
-    server.sendmail(email_addr, me, msg.as_string())
+    server.sendmail(email_addr, recipients, msg.as_string())
     server.quit()
 
 
