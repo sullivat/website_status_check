@@ -6,7 +6,6 @@ import logging
 import datetime
 import requests
 
-from email_secrets import email_addr, email_password
 
 # enable logging, only logging INFO and higher priority messages
 logging.basicConfig(
@@ -19,6 +18,9 @@ config = configparser.ConfigParser()
 config.read('config.ini')
 # create a list of sites from the config file
 SITES = [config['sites'][k] for k in config['sites']]
+# parse the email sending account from cofig.ini
+email_addr = config['email']['sender address']
+email_password = config['email']['sender password']
 
 def check_website(site_addr):
     """
@@ -30,14 +32,17 @@ def check_website(site_addr):
 
     for site in site_addr:
         logging.info("  CHECKING: {}".format(site))
-        r = requests.head(site)
-        if r.status_code != 200:
+        try:
+            r = requests.head(site)
+            if r.status_code != 200:
+                send_notice(site)
+                log_down_site(site, r)
+            else:
+                logging.info("            {0} status code is {1} ".format(
+                    site, r.status_code, ))
+        except requests.ConnectionError:
             send_notice(site)
             log_down_site(site, r)
-        else:
-            logging.info("            {0} status code is {1} ".format(
-                site, r.status_code, ))
-
 
 def send_notice(site):
     """
