@@ -1,1 +1,0 @@
-myworker: python3 main.py
