@@ -16,7 +16,7 @@ with your own sites and email credentials.
 Timothy Sullivan, 2017
 """
 
-from sys import argv
+
 import configparser
 import smtplib
 from email.mime.text import MIMEText
@@ -46,10 +46,6 @@ logging.basicConfig(
     filename=config['log']['filename'],
     level=logging.INFO,
     format='%(asctime)s %(message)s')
-
-if argv[1].upper() in ['DEBUG', 'INFO', 'WARNING']:
-    logging.setLevel(argv[1])
-    
 
 
 #####################
