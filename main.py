@@ -1,16 +1,22 @@
 """
 - website status alerts -
 
-check websites for 200 (ok) status, if the site is done or not ok, send a message to recipients.
-
-Timothy Sullivan, 2017
+check websites for 200 (ok) status, if the site is down or not ok, send a message to recipients.
 
 before using, BUILD A 'config.ini' file with your secrets and info!
+I suggest using a throwaway gmail for this program, as I don't think 2-factor auth can
+be enabled.
 
 'config_template.ini' is provided as a template to create the config.ini file
 with your own sites and email credentials.
+
+
+
+
+Timothy Sullivan, 2017
 """
 
+from sys import argv
 import configparser
 import smtplib
 from email.mime.text import MIMEText
@@ -40,6 +46,10 @@ logging.basicConfig(
     filename=config['log']['filename'],
     level=logging.INFO,
     format='%(asctime)s %(message)s')
+
+if argv[1].upper() in ['DEBUG', 'INFO', 'WARNING']:
+    logging.setLevel(argv[1])
+    
 
 
 #####################
@@ -108,18 +118,12 @@ def log_down_site(site, site_request):
 
 def main():
     """ Main program to run. """
-    def send_terminal_clear():
-        """ Clears the terminal output. """
-        print(chr(27) + "[2J")
-
     while True:
-        send_terminal_clear()
-        print('website check status: checking')
+        logging.debug('website check status: checking')
         check_website(SITES)
-        send_terminal_clear()
-        print('website check status: sleeping for 5 min')
+        logging.debug('website check status: sleeping for 5 min')
         time.sleep(300)
-        send_terminal_clear()
+
 
 
 if __name__ == "__main__":
