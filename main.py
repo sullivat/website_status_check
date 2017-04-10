@@ -1,3 +1,4 @@
+import configparser
 import smtplib
 from email.mime.text import MIMEText
 import time
@@ -13,12 +14,11 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s %(message)s')
 
-# Enter in the sites to monitor, add a check_website function into main() to check them
-SITES = [
-    "http://tim-sullivan.com",         # My portfolio site
-    "http://tim-sullivan.com/blog/",   # My blog
-    "https://github.com/sullivat",         # github site
-]
+# config.ini parsing 
+config = configparser.ConfigParser()
+config.read('config.ini')
+# create a list of sites from the config file
+SITES = [config['sites'][k] for k in config['sites']]
 
 def check_website(site_addr):
     """
