@@ -29,13 +29,15 @@ config.read('config.ini')
 # create a list of sites from the config file
 SITES = [config['sites'][k] for k in config['sites']]
 # parse the email sending account from cofig.ini
+SMTP_host = config['email']['host']
+SMTP_port = int(config['email']['port'])
 email_addr = config['email']['sender address']
 email_password = config['email']['sender password']
 recipients = config['email']['recipients']
 
 # Set up logging, only logging INFO and higher priority messages
 logging.basicConfig(
-    filename='my_sites_availability.log',
+    filename=config['log']['filename'],
     level=logging.INFO,
     format='%(asctime)s %(message)s')
 
@@ -89,7 +91,7 @@ def send_notice(site):
     msg['From'] = email_addr
     msg['To'] = recipients
 
-    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server = smtplib.SMTP(SMTP_host, SMTP_port)
     server.starttls()
     server.login(email_addr, email_password)
 
@@ -107,6 +109,7 @@ def log_down_site(site, site_request):
 def main():
     """ Main program to run. """
     def send_terminal_clear():
+        """ Clears the terminal output. """
         print(chr(27) + "[2J")
 
     while True:
