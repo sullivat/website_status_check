@@ -76,9 +76,18 @@ def log_down_site(site, site_request):
 
 
 def main():
+    
+    def send_terminal_clear():
+        print(chr(27) + "[2J")
+
     while True:
+        send_terminal_clear()
+        print('website check status: checking')
         check_website(SITES)
+        send_terminal_clear()
+        print('website check status: sleeping for 5 min')
         time.sleep(300)
+        send_terminal_clear()
 
 
 if __name__ == "__main__":
