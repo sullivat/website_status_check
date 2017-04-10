@@ -3,6 +3,7 @@ my_sites_avaliability.log
 
 # Config files
 email_secrets.py
+config.ini
 
 
 
