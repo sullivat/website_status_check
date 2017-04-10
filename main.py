@@ -6,14 +6,11 @@ import logging
 import datetime
 import requests
 
+####################
+##    SETTINGS    ##
+####################
 
-# enable logging, only logging INFO and higher priority messages
-logging.basicConfig(
-    filename='my_sites_availability.log',
-    level=logging.INFO,
-    format='%(asctime)s %(message)s')
-
-# config.ini parsing 
+# Parsing 'config.ini' settings
 config = configparser.ConfigParser()
 config.read('config.ini')
 # create a list of sites from the config file
@@ -21,6 +18,18 @@ SITES = [config['sites'][k] for k in config['sites']]
 # parse the email sending account from cofig.ini
 email_addr = config['email']['sender address']
 email_password = config['email']['sender password']
+
+# Set up logging, only logging INFO and higher priority messages
+logging.basicConfig(
+    filename='my_sites_availability.log',
+    level=logging.INFO,
+    format='%(asctime)s %(message)s')
+
+
+#####################
+##    FUNCTIONS    ##
+#####################
+
 
 def check_website(site_addr):
     """
@@ -43,6 +52,7 @@ def check_website(site_addr):
         except requests.ConnectionError:
             send_notice(site)
             log_down_site(site, r)
+
 
 def send_notice(site):
     """
@@ -75,13 +85,14 @@ def send_notice(site):
 
 
 def log_down_site(site, site_request):
+    """ Logging message if a site does not respond correctly. """
     logging.warning("            {0} status code is {1} ".format(
         site, site_request.status_code, ))
     logging.warning("            {} is down, an email was sent".format(site, ))
 
 
 def main():
-    
+    """ Main program to run. """
     def send_terminal_clear():
         print(chr(27) + "[2J")
 
